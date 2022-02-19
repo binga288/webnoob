@@ -38,7 +38,8 @@ if ($mode == "user_each_score") {
 </head>
 
 <body>
-    <?php require_once("../nav.php"); ?>
+    <?php //require_once("../nav.php"); 
+    ?>
     <form action="" method="post">
         <div class="container">
             <h2>圖形統計</h2>
@@ -131,35 +132,42 @@ if ($mode == "user_each_score") {
 
                 //使用者意見發表
                 if (mode == "user_total") {
-                    chart_data.chart.type = "bar";
-                    chart_data.title.text = "使用者意見發表";
+                    (async function() {
+                        chart_data.chart.type = "bar";
+                        chart_data.title.text = "使用者意見發表";
 
-                    let name_data = '<?= $name_data ?>';
-                    let opinion_count = '<?= $opinion_count ?>';
+                        let name_data = '<?= $name_data ?>';
+                        let opinion_count = '<?= $opinion_count ?>';
+                        let link = "chart_data.php?mode=" + mode + "&name_data=" + name_data;
+                        await fetch("chart_data.php?mode=" + mode + "&name_data=" + name_data)
+                            .then(res => res.json())
+                            .then(res => {
+                                chart_data.xAxis.categories = res
+                            });
 
-                    fetch("chart_data.php?mode=" + mode + "&name_data=" + name_data)
-                        .then(res => res.json())
-                        .then(res => {
-                            chart_data.xAxis.categories = res
-                        });
-                    fetch("chart_data.php?mode=" + mode + "&opinion_count=" + opinion_count)
-                        .then(res => res.json())
-                        .then(res => {
-                            chart_data.series = [{
-                                data: res
-                            }]
-                        });
-                    console.log(chart_data);
+
+                        await fetch("chart_data.php?mode=" + mode + "&opinion_count=" + opinion_count)
+                            .then(res => res.json())
+                            .then(res => {
+                                chart_data.series = [{
+                                    data: res
+                                }]
+                            });
+
+                        console.log(chart_data.series);
+                        Highcharts.chart("content<?= $mode ?>", chart_data);
+                    })();
                 }
+
 
                 //使用者評各分個別次數
                 if (mode == "user_each_score") {
                     chart_data.chart.type = "pie";
                     chart_data.title.text = "使用者評各分個別次數";
                 }
-                console.log(chart_data.series);
-                var a = Highcharts.chart("content<?= $mode ?>", chart_data);
-                console.log(a.series);
+
+                // console.log(a.series);
+
                 // < ?php if ($mode == "user_each_score") {
                 //     $chart = "pie";
                 // ?>

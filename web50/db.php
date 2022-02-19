@@ -2,7 +2,7 @@
 if (!isset($_SESSION)) {
     session_start();
 }
-$db = mysqli_connect("127.0.0.1", "admin", "1234", "new50");
+$db = mysqli_connect("127.0.0.1", "root", "", "new50");
 if (!$db) {
     die(mysqli_connect_error());
 }
